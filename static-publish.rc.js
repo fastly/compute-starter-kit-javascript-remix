@@ -3,30 +3,20 @@
  * Licensed under the MIT license. See LICENSE file for details.
  */
 
-const path = require("path");
-const publicDir = path.resolve(process.cwd());
-
-module.exports = {
-  publicDir: "./",
+/** @type {import('@fastly/compute-js-static-publish').StaticPublisherConfig} */
+export default {
+  rootDir: './',
+  staticContentRootDir: './static-publisher',
   excludeDirs: [ './node_modules', ],
-  includeDirs: [ './build', './public' ],
-  staticDirs: [ './public/build' ],
-  moduleTest: function(path) {
-    if (path.endsWith('/remix.config.js') || path.endsWith('/remix.config.mjs')) {
-      return true;
-    }
-    return path.indexOf('/build/') === 0 && !path.endsWith('.map');
+  moduleAssetInclusionTest: function(path) {
+    if (path.startsWith('/build/') && !path.endsWith('.map')) { return 'static-import'; }
+    return false;
   },
-  excludeTest: function(path) {
-    if (path.startsWith(publicDir + '/remix.config.js') || path.endsWith(publicDir + '/remix.config.mjs')) {
-      return false;
-    }
-    if (path.startsWith(publicDir + '/build/') || path.startsWith(publicDir + '/public/')) {
-      return false;
-    }
-    return true;
+  contentAssetInclusionTest: function(path) {
+    if (path.startsWith('/public/')) { return true; }
+    return false;
   },
-  spa: false,
-  autoIndex: [],
-  autoExt: [],
+  server: {
+    publicDirPrefix: '/public',
+  },
 };

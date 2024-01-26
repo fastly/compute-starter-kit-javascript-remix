@@ -5,10 +5,9 @@ node_modules
 /public/build
 .env
 
-# Fastly Compute@Edge
+# Fastly Compute
 /bin
 /pkg
+
 # @fastly/compute-js-static-publish
-/src/statics.js
-/src/statics.d.ts
-/src/static-content
+/static-publisher
