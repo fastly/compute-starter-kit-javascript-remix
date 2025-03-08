@@ -2,9 +2,9 @@
 
 [![Deploy to Fastly](https://deploy.edgecompute.app/button)](https://deploy.edgecompute.app/deploy)
 
-Get started with Remix on Compute@Edge with a starter kit.
+Get started with Remix on Fastly Compute with a starter kit.
 
-**For more details about other starter kits for Compute@Edge, see the [Fastly developer hub](https://developer.fastly.com/solutions/starters)**
+**For more details about other starter kits for Fastly Compute, see the [Fastly developer hub](https://developer.fastly.com/solutions/starters)**
 
 ## Development
 
@@ -48,64 +48,6 @@ Once that's done, you should be able to deploy your app:
 npm run build
 npm run deploy
 ```
-
-## Module bundling
-
-This template does not use module bundling. If you want to replace global modules or use polyfills, you can use a module
-bundler such as Webpack.
-
-To modify your project to use Webpack, follow these steps:
-
-* Install the following development dependencies:
-
-```shell
-npm install --save-dev webpack webpack-cli 
-```
-
-* Create a `webpack.config.js` file with the following content:
-
-```js
-import path from 'path';
-import url from 'url';
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-
-export default {
-  entry: "./src/index.js",
-  mode: "production",
-  target: 'webworker',
-  experiments: {
-    outputModule: true,
-  },
-  output: {
-    filename: "index.js",
-    path: path.resolve(__dirname, "bin"),
-    chunkFormat: "module",
-  },
-  externals: [
-    ({request,}, callback) => {
-      // Allow Webpack to handle fastly:* namespaced module imports by treating
-      // them as modules rather than try to process them as URLs
-      if (/^fastly:.*$/.test(request)) {
-        return callback(null, 'module ' + request);
-      }
-      callback();
-    }
-  ],
-};
-```
-
-* Modify `scripts` in your `package.json` file:
-    * At the end of the `prebuild:fastly` script, add ` && webpack`:
-      ```
-      "prebuild:fastly": "compute-js-static-publish --build-static --suppress-framework-warnings && webpack",
-      ```
-    * Modify the `build:fastly` script's parameter from `./src/index.js` to `./bin/index.js`:
-      ```
-      "build:fastly": "js-compute-runtime ./bin/index.js ./bin/main.wasm",
-      ```
-
-* [Make further changes to `webpack.config.js`](https://developer.fastly.com/learning/compute/javascript/#module-bundling) as necessary to replace global variables, add any polyfills,
-  or anything else that you wish to achieve using module bundling.
 
 ### Security issues
 
